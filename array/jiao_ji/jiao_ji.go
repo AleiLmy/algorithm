@@ -40,9 +40,6 @@ func IntersectionSort(a, b []int) []int {
 	i, j, k := 0, 0, 0
 	quick_sort.QuickSort(a, 0, len(a)-1)
 	sort.Ints(b)
-	fmt.Println(a)
-	fmt.Println(b)
-
 	for i < len(a) && j < len(b) {
 		if a[i] < b[j] {
 			i++
@@ -59,6 +56,7 @@ func IntersectionSort(a, b []int) []int {
 }
 
 func main() {
+	Intersection([]int{4, 9, 5}, []int{9, 4, 9, 8, 4})
 	res := IntersectionSort([]int{4, 9, 5}, []int{9, 4, 9, 8, 4})
 	fmt.Println(res)
 }
