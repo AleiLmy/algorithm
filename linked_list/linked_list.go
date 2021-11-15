@@ -17,10 +17,11 @@ func NewLinkNode(val ...int) *LinkNode {
 	list := &LinkNode{Val: -1, Next: nil}
 	head := list
 	for _, v := range val {
-		list.Next = &LinkNode{
+		next := &LinkNode{
 			Val:  v,
 			Next: nil,
 		}
+		list.Next = next
 		list = list.Next
 	}
 	return head
