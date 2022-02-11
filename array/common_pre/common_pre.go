@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-// 一个字符串数组的最长公共前缀
+// LongCommonPrefix 一个字符串数组的最长公共前缀
 func LongCommonPrefix(strs []string) string {
 	if len(strs) == 0 {
 		return ""

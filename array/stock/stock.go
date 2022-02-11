@@ -9,8 +9,8 @@
 package main
 
 import (
-	"context"
 	"fmt"
+	"math"
 )
 
 // 买卖股票的最佳时机
@@ -36,6 +36,27 @@ func MaxStock(prices []int) int {
 	}
 	return dp[length-1][1]
 }
+
+func MaxStock2(prices []int) int {
+	length := len(prices)
+	if length < 2 {
+		return 0
+	}
+	var (
+		ret = 0
+		min = math.MaxInt
+	)
+	for _, v := range prices {
+		if v < min {
+			min = v
+		}
+		if v-min > ret {
+			ret = v - min
+		}
+	}
+	return ret
+}
+
 func max(a, b int) int {
 	if a > b {
 		return a
@@ -44,8 +65,9 @@ func max(a, b int) int {
 }
 
 func main() {
-	fmt.Println(MaxStock1([]int{7, 1, 5, 3, 6, 4}))
-	fmt.Println(MaxStock([]int{7, 6, 4, 3, 1}))
+	// fmt.Println(MaxStock1([]int{7, 1, 5, 3, 6, 4}))
+	fmt.Println(MaxStock([]int{7, 1, 5, 3, 6, 4}))
+	fmt.Println(MaxStock2([]int{7, 1, 5, 3, 6, 4}))
 }
 
 // MaxStock1 可以多次买卖
@@ -69,33 +91,4 @@ func MaxStock1(prices []int) int {
 		dp[i][1] = max(dp[i-1][1], dp[i-1][0]-prices[i])
 	}
 	return dp[length-1][0]
-}
-
-// ExtraInfo 策略信息的统一返回
-type ExtraInfo struct {
-	Ext interface{} `json:"ext"`
-}
-
-// StrategyExtractInterface 提取接口
-type StrategyExtractInterface interface {
-	Extract(context.Context, []byte, []map[string]interface{}) ExtraInfo
-}
-
-// SyncWordExtract 注册提取的策略
-type SyncWordExtract struct {
-}
-
-// Extract 提取操作
-func (s *SyncWordExtract) Extract(ctx context.Context, articleInfo []byte, strategyParam []map[string]interface{}) ExtraInfo {
-	// todo 提取的逻辑
-	return ExtraInfo{}
-}
-
-// GetExtractRouter 获取提取的路由
-func GetExtractRouter(strategyName string) StrategyExtractInterface {
-	switch strategyName {
-	case "sync_word":
-		return &SyncWordExtract{}
-	}
-	return nil
 }
