@@ -32,4 +32,18 @@ func MoreHaf(array []int) int {
 
 func main() {
 	fmt.Println(MoreHaf([]int{1, 2, 3, 2, 2, 2, 5, 4, 2}))
+	b := []int{0, 0, 1, 1, 1, 2, 2, 3, 3, 4}
+	removeDuplicates(b)
+}
+
+func removeDuplicates(nums []int) {
+	slow := 1
+	for fast := 1; fast < len(nums); fast++ {
+		if nums[fast] != nums[fast-1] {
+			nums[slow] = nums[fast]
+			slow++
+		}
+	}
+	fmt.Println(slow)
+	fmt.Println(nums[:slow])
 }
