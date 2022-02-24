@@ -27,6 +27,20 @@ func NewLinkNode(val ...int) *LinkNode {
 	return head
 }
 
+func NewListNode(val ...int) *ListNode {
+	list := &ListNode{Val: -1, Next: nil}
+	head := list
+	for _, v := range val {
+		next := &ListNode{
+			Val:  v,
+			Next: nil,
+		}
+		list.Next = next
+		list = list.Next
+	}
+	return head
+}
+
 type ListNode struct {
 	Val  int
 	Next *ListNode
@@ -209,4 +223,144 @@ func mergeKLists(lists []*ListNode) *ListNode {
 	}
 	mid := len(lists) / 2
 	return mergeTwoLists(mergeKLists(lists[0:mid]), mergeKLists(lists[mid:]))
+}
+
+// https://leetcode-cn.com/problems/insertion-sort-list/
+func insertionSortList(head *ListNode) *ListNode {
+	if head == nil {
+		return nil
+	}
+	ret := &ListNode{
+		Next: head,
+	}
+	pre, cur := head, head.Next
+	for cur != nil {
+		if pre.Val <= cur.Val {
+			pre = pre.Next
+		} else {
+			tmp := ret // 从头开始插入
+			for tmp.Next.Val <= cur.Val {
+				tmp = tmp.Next
+			}
+			pre.Next = cur.Next // 跳过这个结点
+			cur.Next = tmp.Next
+			tmp.Next = cur
+		}
+		cur = pre.Next
+	}
+	return ret.Next
+}
+
+func insertionSortList1(head *ListNode) *ListNode {
+	if head == nil {
+		return nil
+	}
+	dummyHead := &ListNode{Next: head}
+	lastSorted, curr := head, head.Next
+	for curr != nil {
+		if lastSorted.Val <= curr.Val {
+			lastSorted = lastSorted.Next
+		} else {
+			prev := dummyHead
+			for prev.Next.Val <= curr.Val {
+				prev = prev.Next
+			}
+			lastSorted.Next = curr.Next
+			curr.Next = prev.Next
+			prev.Next = curr
+		}
+		curr = lastSorted.Next
+	}
+	return dummyHead.Next
+}
+
+// https://leetcode-cn.com/problems/sort-list/
+func sortList(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
+	}
+	slow, fast := head, head.Next
+	for fast != nil && fast.Next != nil {
+		slow = slow.Next
+		fast = fast.Next.Next
+	}
+	t := slow.Next
+	slow.Next = nil
+	l1 := sortList(head)
+	l2 := sortList(t)
+	ret := &ListNode{}
+	cur := ret
+	for l1 != nil && l2 != nil {
+		if l1.Val <= l2.Val {
+			cur.Next = l1
+			l1 = l1.Next
+		} else {
+			cur.Next = l2
+			l2 = l2.Next
+		}
+		cur = cur.Next
+	}
+	if l1 != nil {
+		cur.Next = l1
+	}
+	if l2 != nil {
+		cur.Next = l2
+	}
+	return ret.Next
+}
+
+func reverseList1(head *ListNode) *ListNode {
+	var pre *ListNode
+	cur := head
+	for cur != nil {
+		tmp := cur.Next
+		cur.Next = pre
+		pre = cur
+		cur = tmp
+	}
+	return pre
+}
+
+func reverseBetween(head *ListNode, left int, right int) *ListNode {
+	ret := &ListNode{Val: -1, Next: head}
+	pre := ret
+	for i := 0; i < left-1; i++ {
+		pre = pre.Next // 前置的一个节点
+	}
+	cur := pre.Next
+	for i := 0; i < right-left; i++ {
+		next := cur.Next
+		cur.Next = cur.Next.Next
+		next.Next = pre.Next
+		pre.Next = next
+	}
+	return ret.Next
+}
+
+// https://leetcode-cn.com/problems/reorder-list/
+func reorderList(head *ListNode) {
+	if head == nil || head.Next == nil {
+		return
+	}
+	slow, fast := head, head.Next
+	for fast != nil && fast.Next != nil {
+		fast = fast.Next.Next
+		slow = slow.Next
+	}
+	mid := slow.Next
+	slow.Next = nil
+	mid = reverseList(mid)
+	pre := head
+	merge(pre, mid)
+}
+
+func merge(l1, l2 *ListNode) {
+	var l1Tmp, l2Tmp *ListNode
+	for l1 != nil && l2 != nil {
+		l1Tmp, l2Tmp = l1.Next, l2.Next
+		l1.Next = l2
+		l1 = l1Tmp
+		l2.Next = l1
+		l2 = l2Tmp
+	}
 }

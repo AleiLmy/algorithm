@@ -9,14 +9,15 @@
 package linked_list
 
 import (
-	"fmt"
 	"testing"
 )
 
 func TestNewLinkNode(t *testing.T) {
-	list := NewLinkNode(1, 2, 3, 4)
-	for list != nil {
-		fmt.Println(list.Val)
-		list = list.Next
-	}
+	//list := NewLinkNode(1, 2, 3, 4)
+	//for list != nil {
+	//	fmt.Println(list.Val)
+	//	list = list.Next
+	//}
+
+	insertionSortList(NewListNode(4, 2, 1, 3))
 }
