@@ -139,3 +139,74 @@ func deleteDuplicates(head *ListNode) *ListNode {
 	}
 	return pre.Next
 }
+
+// https://leetcode-cn.com/problems/kth-node-from-end-of-list-lcci/
+func kthToLast(head *ListNode, k int) int {
+	p, q := head, head
+	for i := 0; i < k; i++ {
+		p = p.Next
+	}
+	for p != nil {
+		p = p.Next
+		q = q.Next
+	}
+	return q.Val
+}
+
+// https://leetcode-cn.com/problems/swap-nodes-in-pairs/
+func swapPairs(head *ListNode) *ListNode {
+	ret := &ListNode{Val: 0, Next: head}
+	pre, cur := ret, head
+	for cur != nil && cur.Next != nil {
+		t := cur.Next
+		cur.Next = t.Next
+		t.Next = cur
+		pre.Next = t
+		pre = cur
+		cur = cur.Next
+	}
+	return ret.Next
+}
+
+// https://leetcode-cn.com/problems/merge-two-sorted-lists/
+func mergeTwoLists(list1 *ListNode, list2 *ListNode) *ListNode {
+	pre := &ListNode{}
+	cur := pre
+	for list1 != nil && list2 != nil {
+		if list1.Val < list2.Val {
+			cur.Next = list1
+			cur = cur.Next
+			list1 = list1.Next
+		} else {
+			cur.Next = list2
+			cur = cur.Next
+			list2 = list2.Next
+		}
+	}
+	for list1 != nil {
+		cur.Next = list1
+		cur = cur.Next
+		list1 = list1.Next
+	}
+	for list2 != nil {
+		cur.Next = list2
+		cur = cur.Next
+		list2 = list2.Next
+	}
+	return pre.Next
+}
+
+// https://leetcode-cn.com/problems/merge-k-sorted-lists/
+func mergeKLists(lists []*ListNode) *ListNode {
+	if len(lists) == 0 {
+		return nil
+	}
+	if len(lists) == 1 {
+		return lists[0]
+	}
+	if len(lists) == 2 {
+		return mergeTwoLists(lists[0], lists[1])
+	}
+	mid := len(lists) / 2
+	return mergeTwoLists(mergeKLists(lists[0:mid]), mergeKLists(lists[mid:]))
+}
