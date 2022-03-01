@@ -9,6 +9,7 @@
 package linked_list
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -19,5 +20,5 @@ func TestNewLinkNode(t *testing.T) {
 	//	list = list.Next
 	//}
 
-	insertionSortList(NewListNode(4, 2, 1, 3))
+	fmt.Println(isPalindrome(NewListNode(1, 2)))
 }

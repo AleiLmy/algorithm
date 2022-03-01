@@ -38,7 +38,7 @@ func NewListNode(val ...int) *ListNode {
 		list.Next = next
 		list = list.Next
 	}
-	return head
+	return head.Next
 }
 
 type ListNode struct {
@@ -363,4 +363,155 @@ func merge(l1, l2 *ListNode) {
 		l2.Next = l1
 		l2 = l2Tmp
 	}
+}
+
+// https://leetcode-cn.com/problems/rotate-list/
+func rotateRight(head *ListNode, k int) *ListNode {
+	if k == 0 || head == nil || head.Next == nil {
+		return head
+	}
+	n := 1
+	cur := head
+	for cur.Next != nil {
+		n++
+		cur = cur.Next
+	}
+	mod := k % n
+	if mod == 0 {
+		return head
+	}
+	cur.Next = head
+	tmp := n - mod
+	for tmp > 0 {
+		cur = cur.Next
+		tmp--
+	}
+	ret := cur.Next
+	cur.Next = nil
+	return ret
+}
+
+// https://leetcode-cn.com/problems/palindrome-linked-list/
+func isPalindrome(head *ListNode) bool {
+	if head == nil || head.Next == nil {
+		return false
+	}
+	slow, fast := head, head.Next
+	for fast != nil && fast.Next != nil {
+		slow = slow.Next
+		fast = fast.Next.Next
+	}
+	pre := slow.Next
+	var cur *ListNode
+	for pre != nil {
+		tmp := pre.Next
+		pre.Next = cur
+		cur = pre
+		pre = tmp
+	}
+	for cur != nil {
+		if cur.Val != head.Val {
+			return false
+		}
+		cur, head = cur.Next, head.Next
+	}
+	return true
+}
+
+// https://leetcode-cn.com/problems/intersection-of-two-linked-lists/
+func getIntersectionNode(headA, headB *ListNode) *ListNode {
+	p, q := headA, headB
+	for p != q {
+		if p == nil {
+			p = headB
+		} else {
+			p = p.Next
+		}
+		if q == nil {
+			q = headA
+		} else {
+			q = q.Next
+		}
+	}
+	return q
+}
+
+// https://leetcode-cn.com/problems/odd-even-linked-list/
+func oddEvenList(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
+	}
+	pre, end := &ListNode{}, &ListNode{}
+	p := pre
+	q := end
+	i := 1
+	for head != nil {
+		if i%2 != 0 {
+			p.Next = head
+			p = head
+		} else {
+			q.Next = head
+			q = head
+		}
+		head = head.Next
+		i++
+	}
+	q.Next = nil
+	p.Next = end.Next
+	return pre.Next
+}
+
+func hasCycle(head *ListNode) bool {
+	slow, fast := head, head
+	for fast != nil && fast.Next != nil {
+		slow, fast = slow.Next, fast.Next.Next
+		if slow == fast {
+			return true
+		}
+	}
+	return false
+}
+
+// https://leetcode-cn.com/problems/linked-list-cycle-ii/
+func detectCycle(head *ListNode) *ListNode {
+	if head == nil {
+		return head
+	}
+
+	var (
+		slow, fast = head, head
+		cl         bool
+	)
+	for !cl && fast != nil && fast.Next != nil {
+		slow = slow.Next
+		fast = fast.Next.Next
+		cl = slow == fast
+	}
+	if !cl {
+		return nil
+	}
+	p := head
+	for p != slow {
+		p = p.Next
+		slow = slow.Next
+	}
+	return p
+}
+
+// https://leetcode-cn.com/problems/subsets/submissions/
+func subsets(nums []int) [][]int {
+	var ret [][]int
+	if len(nums) == 0 {
+		return ret
+	}
+	ret = append(ret, []int{})
+	for _, v := range nums {
+		for _, v2 := range ret {
+			tmp := make([]int, len(v2))
+			copy(tmp, v2)
+			tmp = append(tmp, v)
+			ret = append(ret, tmp)
+		}
+	}
+	return ret
 }
