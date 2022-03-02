@@ -8,6 +8,8 @@
 
 package linked_list
 
+import "strconv"
+
 type LinkNode struct {
 	Val  int
 	Next *LinkNode
@@ -514,4 +516,178 @@ func subsets(nums []int) [][]int {
 		}
 	}
 	return ret
+}
+
+// https://leetcode-cn.com/problems/single-number-ii/
+func singleNumber1(nums []int) int {
+	ret := int32(0)
+	for i := 0; i < 32; i++ {
+		total := int32(0)
+		for _, v := range nums {
+			total = total + int32(v)>>i&1
+		}
+		if total%3 > 0 {
+			ret = ret | (total%3)<<i
+		}
+	}
+	return int(ret)
+}
+
+// https://leetcode-cn.com/problems/single-number-iii/
+func singleNumber(nums []int) []int {
+	var total int
+	for _, v := range nums {
+		total ^= v
+	}
+	// 求最低位的1
+	low := total & -total
+	var left int
+	for _, v := range nums {
+		if low&v > 0 {
+			left ^= v
+		}
+	}
+	return []int{left, left ^ total}
+
+}
+
+// https://leetcode-cn.com/problems/set-mismatch/
+func findErrorNums(nums []int) []int {
+	// 位运算
+	var total int
+	// 将数组+ 1~n的  重复就3次 丢失 1次  其余两次
+	for k, v := range nums {
+		total ^= v
+		total ^= k + 1
+	}
+	// 最低位的1
+	low := total & -total
+	var left int
+	for k, v := range nums {
+		if low&v > 0 {
+			left ^= v
+		}
+		if low&(k+1) > 0 {
+			left ^= k + 1
+		}
+	}
+	for _, v := range nums {
+		if v == left {
+			return []int{left, left ^ total}
+		}
+	}
+	return []int{left ^ total, left}
+}
+
+// https://leetcode-cn.com/problems/number-of-1-bits/
+func hammingWeight(num uint32) int {
+	var ret int
+	//for num > 0 {
+	//	ret += int(num & 1)
+	//	num >>= 1
+	//}
+
+	for num > 0 {
+		num = num & (num - 1)
+		ret++
+	}
+
+	return ret
+}
+
+// https://leetcode-cn.com/problems/count-primes/
+func countPrimes(n int) int {
+	var (
+		ret int
+		tmp = make([]bool, n)
+	)
+	for i := range tmp {
+		tmp[i] = true
+	}
+	for i := 2; i < n; i++ {
+		if tmp[i] {
+			ret++
+			for j := i * 2; j < n; j += i {
+				tmp[j] = false
+			}
+		}
+	}
+	return ret
+}
+
+func missingNumber(nums []int) int {
+	var ret int
+	for k, v := range nums {
+		ret ^= v
+		ret ^= k
+	}
+	return ret ^ len(nums)
+}
+
+// https://leetcode-cn.com/problems/valid-parentheses/
+func isValid(s string) bool {
+	var stack []byte
+	tmp := map[byte]byte{
+		'}': '{',
+		')': '(',
+		']': '[',
+	}
+	for i := range s {
+		if s[i] == '{' || s[i] == '(' || s[i] == '[' {
+			stack = append(stack, s[i])
+		} else {
+			if len(stack) == 0 || tmp[s[i]] != stack[len(stack)-1] {
+				return false
+			}
+			// 出栈
+			stack = stack[:len(stack)-1]
+		}
+	}
+	return len(stack) == 0
+}
+
+// https://leetcode-cn.com/problems/evaluate-reverse-polish-notation/
+func evalRPN(tokens []string) int {
+	var stack []int // 栈
+	for _, v := range tokens {
+		if !isCal(v) {
+			v1, _ := strconv.Atoi(v)
+			stack = append(stack, v1)
+		} else {
+			// pop量个元素
+			b := stack[len(stack)-1]
+			a := stack[len(stack)-2]
+			stack = stack[:len(stack)-2]
+			stack = append(stack, cal(a, b, v))
+		}
+	}
+	return stack[0]
+}
+
+func cal(a, b int, s string) int {
+	if s == "+" {
+		return a + b
+	}
+	if s == "-" {
+		return a - b
+	}
+	if s == "*" {
+		return a * b
+	}
+	return a / b
+
+}
+
+func isCal(s string) bool {
+	switch s {
+	case "+":
+		return true
+	case "-":
+		return true
+	case "*":
+		return true
+	case "/":
+		return true
+	}
+	return false
 }
