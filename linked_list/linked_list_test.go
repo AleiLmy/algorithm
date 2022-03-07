@@ -20,5 +20,5 @@ func TestNewLinkNode(t *testing.T) {
 	//	list = list.Next
 	//}
 
-	fmt.Println(isPalindrome(NewListNode(1, 2)))
+	fmt.Println(subsets([]int{1, 2, 3}))
 }

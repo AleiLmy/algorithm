@@ -89,3 +89,59 @@ func isCowel(i byte) bool {
 	}
 	return false
 }
+
+// https://leetcode-cn.com/problems/longest-palindromic-substring/
+func longestPalindrome(s string) string {
+	length := len(s)
+	var ret string
+	for i := 0; i < length; i++ {
+		for j := 0; j < 2; j++ {
+			l, r := i, i+j
+			for l >= 0 && r < length && s[l] == s[r] {
+				if (r - l + 1) > len(ret) {
+					ret = s[l : r+1]
+				}
+				l--
+				r++
+			}
+		}
+	}
+	return ret
+}
+
+func countSubstrings(s string) int {
+	length := len(s)
+	var ret int
+	if length == 0 || length == 1 {
+		return length
+	}
+	for i := 0; i < length; i++ {
+		for j := 0; j < 2; j++ {
+			l, r := i, i+j
+			for l >= 0 && r < length && s[l] == s[r] {
+				ret++
+				l--
+				r++
+			}
+		}
+	}
+	return ret
+}
+
+// https://leetcode-cn.com/problems/container-with-most-water/
+func maxArea(height []int) int {
+	var (
+		res  int
+		l, r = 0, len(height) - 1
+	)
+	for l <= r {
+		if height[l] < height[r] {
+			res = max(res, height[l]*(r-l))
+			l++
+		} else {
+			res = max(res, height[r]*(r-l))
+			r--
+		}
+	}
+	return res
+}

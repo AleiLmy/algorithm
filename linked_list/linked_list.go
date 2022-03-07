@@ -8,7 +8,10 @@
 
 package linked_list
 
-import "strconv"
+import (
+	"math"
+	"strconv"
+)
 
 type LinkNode struct {
 	Val  int
@@ -501,7 +504,7 @@ func detectCycle(head *ListNode) *ListNode {
 }
 
 // https://leetcode-cn.com/problems/subsets/submissions/
-func subsets(nums []int) [][]int {
+func subsets1(nums []int) [][]int {
 	var ret [][]int
 	if len(nums) == 0 {
 		return ret
@@ -516,6 +519,25 @@ func subsets(nums []int) [][]int {
 		}
 	}
 	return ret
+}
+func subsets(nums []int) [][]int {
+	var (
+		tmp = make([]int, 0)
+		ret [][]int
+	)
+	dfsSet(0, nums, tmp, &ret)
+	return ret
+}
+
+func dfsSet(index int, nums []int, tmp []int, ret *[][]int) {
+	t := make([]int, len(tmp))
+	copy(t, tmp)
+	*ret = append(*ret, t)
+	for i := index; i < len(nums); i++ {
+		tmp = append(tmp, nums[i])
+		dfsSet(i+1, nums, tmp, ret)
+		tmp = tmp[:len(tmp)-1]
+	}
 }
 
 // https://leetcode-cn.com/problems/single-number-ii/
@@ -746,4 +768,145 @@ func mySqrt(x int) int {
 		}
 	}
 	return l
+}
+
+// https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list/
+func removeNthFromEnd(head *ListNode, n int) *ListNode {
+	if head == nil {
+		return head
+	}
+	list := &ListNode{Next: head}
+	pre, cur := list, head
+	i := 0
+	for cur != nil {
+		i++
+		cur = cur.Next
+		if i > n {
+			pre = pre.Next
+		}
+	}
+	pre.Next = pre.Next.Next
+	return list.Next
+}
+
+// https://leetcode-cn.com/problems/generate-parentheses/
+func generateParenthesis(n int) []string {
+	var ret []string
+	back(n, n, "", &ret)
+	return ret
+}
+func back(l, r int, tmp string, ret *[]string) {
+	if r == 0 {
+		*ret = append(*ret, tmp)
+		return
+	}
+	if l > 0 {
+		back(l-1, r, tmp+"(", ret)
+	}
+	if r > l {
+		back(l, r-1, tmp+")", ret)
+	}
+}
+
+// https://leetcode-cn.com/problems/next-permutation/
+func nextPermutation(nums []int) {
+	i := len(nums) - 2
+	for i >= 0 && nums[i] >= nums[i+1] {
+		i--
+	}
+	if i >= 0 {
+		j := len(nums) - 1
+		for j >= 0 && nums[j] <= nums[i] {
+			j--
+		}
+		nums[i], nums[j] = nums[j], nums[i]
+	}
+
+	// reverse
+	reverse(nums[i+1:])
+}
+
+func reverse(a []int) {
+	for s, e := 0, len(a); s < e/2; s++ {
+		a[s], a[e-s-1] = a[e-s-1], a[s]
+	}
+}
+
+// https://leetcode-cn.com/problems/min-stack/
+type MinStack struct {
+	stk  []int
+	min  int
+	size int
+}
+
+func Constructor() MinStack {
+	return MinStack{stk: make([]int, 0), min: math.MaxInt64}
+}
+
+// 4.2.1.3
+// min=4
+// 0,
+func (this *MinStack) Push(val int) {
+	if this.size == 0 {
+		this.min = val
+	}
+	this.stk = append(this.stk, val-this.min)
+	if this.min > val {
+		this.min = val
+	}
+	this.size++
+}
+
+func (this *MinStack) Pop() {
+	if this.stk[this.size-1] < 0 {
+		this.min -= this.stk[this.size-1]
+	}
+	this.stk = this.stk[:this.size-1]
+	this.size--
+}
+
+func (this *MinStack) Top() int {
+	if this.stk[this.size-1] >= 0 {
+		return this.min + this.stk[this.size-1]
+	}
+	return this.min
+}
+
+func (this *MinStack) GetMin() int {
+	return this.min
+}
+
+/**
+ * Your MinStack object will be instantiated and called as such:
+ * obj := Constructor();
+ * obj.Push(val);
+ * obj.Pop();
+ * param_3 := obj.Top();
+ * param_4 := obj.GetMin();
+ */
+// https://leetcode-cn.com/problems/combination-sum/
+func combinationSum(candidates []int, target int) [][]int {
+	var (
+		tmp []int
+		ret [][]int
+	)
+	dfs(0, target, candidates, tmp, &ret)
+	return ret
+}
+
+func dfs(index, target int, candidates, tmp []int, ret *[][]int) {
+	if target == 0 {
+		t := make([]int, len(tmp))
+		copy(t, tmp)
+		*ret = append(*ret, t)
+		return
+	}
+	if target < 0 {
+		return
+	}
+	for i := index; i < len(candidates); i++ {
+		tmp = append(tmp, candidates[i])
+		dfs(i, target-candidates[i], candidates, tmp, ret)
+		tmp = tmp[:len(tmp)-1]
+	}
 }
