@@ -19,6 +19,7 @@ func TestNewLinkNode(t *testing.T) {
 	//	fmt.Println(list.Val)
 	//	list = list.Next
 	//}
-
-	fmt.Println(permute([]int{1, 2, 3}))
+	a := []int{2, 1, 4, 3, 5}
+	sort(a, 0, len(a)-1)
+	fmt.Println(a)
 }

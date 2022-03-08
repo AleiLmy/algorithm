@@ -1082,3 +1082,29 @@ func findDuplicate(nums []int) int {
 	}
 	return l
 }
+
+func sort(arr []int, l, r int) {
+	if l < r {
+		i, j := l, r
+		mid := arr[(i+j)>>1]
+		for i <= j {
+			for arr[i] < mid {
+				i++
+			}
+			for arr[j] > mid {
+				j--
+			}
+			if i <= j {
+				arr[i], arr[j] = arr[j], arr[i]
+				i++
+				j--
+			}
+		}
+		if j > l {
+			sort(arr, l, j)
+		}
+		if r > i {
+			sort(arr, i, r)
+		}
+	}
+}
