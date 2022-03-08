@@ -910,3 +910,67 @@ func dfs(index, target int, candidates, tmp []int, ret *[][]int) {
 		tmp = tmp[:len(tmp)-1]
 	}
 }
+
+//https://leetcode-cn.com/problems/search-in-rotated-sorted-array/
+func search(nums []int, target int) int {
+	if len(nums) == 0 {
+		return -1
+	}
+	l, r := 0, len(nums)-1
+	for l < r {
+		mid := (l + r) >> 1
+		if nums[mid] < nums[r] {
+			r = mid
+		} else {
+			l = mid + 1
+		}
+	}
+	small := l // 最小值
+	l, r = 0, len(nums)-1
+	for l <= r {
+		mid := (l + r) >> 1
+		real := (mid + small) % len(nums)
+		if nums[real] == target {
+			return real
+		}
+		if nums[real] < target {
+			l = mid + 1
+		} else {
+			r = mid - 1
+		}
+	}
+	return -1
+}
+
+// https://leetcode-cn.com/problems/permutations/
+func permute(nums []int) [][]int {
+	if len(nums) == 0 {
+		return [][]int{}
+	}
+	var (
+		ret [][]int
+		has = make(map[int]struct{})
+		tmp []int
+	)
+	permuteDfs(nums, tmp, has, &ret)
+	return ret
+}
+
+func permuteDfs(nums []int, tmp []int, has map[int]struct{}, ret *[][]int) {
+	if len(tmp) == len(nums) {
+		t := make([]int, len(tmp))
+		copy(t, tmp)
+		*ret = append(*ret, t)
+		return
+	}
+	for i := 0; i < len(nums); i++ {
+		if _, ok := has[nums[i]]; ok {
+			continue
+		}
+		tmp = append(tmp, nums[i])
+		has[nums[i]] = struct{}{}
+		permuteDfs(nums, tmp, has, ret)
+		delete(has, nums[i])
+		tmp = tmp[:len(tmp)-1]
+	}
+}
