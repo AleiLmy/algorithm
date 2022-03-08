@@ -974,3 +974,36 @@ func permuteDfs(nums []int, tmp []int, has map[int]struct{}, ret *[][]int) {
 		tmp = tmp[:len(tmp)-1]
 	}
 }
+
+// https://leetcode-cn.com/problems/longest-consecutive-sequence/
+func longestConsecutive(nums []int) int {
+	var (
+		m   int
+		tmp = make(map[int]struct{}, len(nums))
+	)
+	for _, v := range nums {
+		tmp[v] = struct{}{}
+	}
+
+	for _, num := range nums {
+		if _, ok := tmp[num-1]; !ok {
+			// 开始计算有多少个
+			_, o := tmp[num]
+			var t int
+			for o {
+				t++
+				num++
+				_, o = tmp[num]
+			}
+			m = max(m, t)
+		}
+	}
+	return m
+}
+func max(a, b int) int {
+	if a > b {
+		return a
+
+	}
+	return b
+}
