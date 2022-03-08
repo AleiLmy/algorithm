@@ -1007,3 +1007,78 @@ func max(a, b int) int {
 	}
 	return b
 }
+
+// https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/
+func letterCombinations(digits string) []string {
+	if len(digits) == 0 {
+		return []string{}
+	}
+	var (
+		tmp string
+		ret []string
+	)
+	dfsLetterCombinations(digits, tmp, &ret, 0)
+	return ret
+}
+
+var ms = map[string][]string{
+	"2": {"a", "b", "c"},
+	"3": {"d", "e", "f"},
+	"4": {"g", "h", "i"},
+	"5": {"j", "k", "l"},
+	"6": {"m", "n", "o"},
+	"7": {"p", "q", "r", "s"},
+	"8": {"t", "u", "v"},
+	"9": {"w", "x", "y", "z"},
+}
+
+func dfsLetterCombinations(digits string, tmp string, ret *[]string, index int) {
+	if len(digits) == len(tmp) {
+		*ret = append(*ret, tmp)
+		return
+	}
+	letter := ms[string(digits[index])]
+	for i := 0; i < len(letter); i++ {
+		tmp += letter[i]
+		dfsLetterCombinations(digits, tmp, ret, index+1)
+		tmp = tmp[:len(tmp)-1]
+	}
+}
+
+// https://leetcode-cn.com/problems/maximum-subarray/
+func maxSubArray(nums []int) int {
+	if len(nums) == 0 {
+		return 0
+	}
+	max := nums[0]
+	for i := 1; i < len(nums); i++ {
+		if nums[i]+nums[i-1] > nums[i] {
+			nums[i] = nums[i] + nums[i-1]
+		}
+		if nums[i] > max {
+			max = nums[i]
+		}
+	}
+	return max
+}
+
+// https://leetcode-cn.com/problems/find-the-duplicate-number/
+func findDuplicate(nums []int) int {
+	l, r := 0, len(nums)-1
+
+	for l < r {
+		mid := (l + r + 1) >> 1
+		count := 0
+		for _, v := range nums {
+			if v <= mid {
+				count++
+			}
+		}
+		if count > mid {
+			r = mid
+		} else {
+			l = mid + 1
+		}
+	}
+	return l
+}
