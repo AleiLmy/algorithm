@@ -8,6 +8,8 @@
 
 package quick_sort
 
+import "sort"
+
 // 快排
 
 func QuickSort(arr []int, start, end int) {
@@ -34,4 +36,21 @@ func QuickSort(arr []int, start, end int) {
 			QuickSort(arr, i, end)
 		}
 	}
+}
+
+// https://leetcode-cn.com/problems/group-anagrams/
+func groupAnagrams(strs []string) [][]string {
+	tmp := make(map[string][]string)
+	for _, v := range strs {
+		t := []byte(v)
+		sort.Slice(t, func(i, j int) bool {
+			return t[i] < t[j]
+		})
+		tmp[string(t)] = append(tmp[string(t)], v)
+	}
+	var ret [][]string
+	for _, v := range tmp {
+		ret = append(ret, v)
+	}
+	return ret
 }
